@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(Animator))]
 public class CharacterView : MonoBehaviour
@@ -6,6 +7,8 @@ public class CharacterView : MonoBehaviour
     private const string MovementDirectionKey = "MovementDirection";
 
     [SerializeField] private CharacterMover _characterMover;
+    [SerializeField] private VisualEffect _dissolveEffect;
+    [SerializeField] private SkinnedMeshRenderer _skinnedMeshRenderer;
     private Animator _animator;
 
     private void Awake() => _animator = GetComponent<Animator>();
@@ -22,8 +25,20 @@ public class CharacterView : MonoBehaviour
 
     private void OnMovementDirectionComputed(Vector3 movementDirection) => _animator.SetFloat(MovementDirectionKey, movementDirection.magnitude);
 
-    public void Pause()
+    public void Pause() => _animator.speed = 0;
+
+    public void Unpause() => _animator.speed = 1;
+
+    public void OnCaptured()
     {
-        _animator.speed = 0;
+        Pause();
+        _dissolveEffect.Play();
+        _skinnedMeshRenderer.gameObject.SetActive(false);
+    }
+
+    public void OnUncaptured()
+    {
+        Unpause();
+        _skinnedMeshRenderer.gameObject.SetActive(true);
     }
 }

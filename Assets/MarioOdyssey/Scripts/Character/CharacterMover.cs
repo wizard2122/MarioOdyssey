@@ -3,7 +3,7 @@ using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(CharacterController))]
-public class CharacterMover : MonoBehaviour, ITransformable
+public class CharacterMover : MonoBehaviour, ITransformable, IPause
 {
     public event Action<Vector3> MovementDirectionComputed;
 
@@ -22,20 +22,21 @@ public class CharacterMover : MonoBehaviour, ITransformable
     private float _dampedTargetRotationPassedTime;
 
     private bool _isWorking;
+    private bool _isPaused;
+
 
     public Transform Transform => transform;
 
-    [Inject]
-    private void Construct(CharacterInput input)
+    public void Initialize(CharacterInput input)
     {
         _input = input;
         _characterController = GetComponent<CharacterController>();
         _camera = Camera.main;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        if (_isWorking == false)
+        if (_isWorking == false || _isPaused) 
             return;
 
         Debug.Log("RUN");
@@ -54,6 +55,8 @@ public class CharacterMover : MonoBehaviour, ITransformable
             Move(Quaternion.Euler(0, inputAngleDirection, 0) * Vector3.forward);
         }
     }
+
+    public void SetPause(bool isPause) => _isPaused = isPause;
 
     public void StartWork() => _isWorking = true;
     public void StopWork() => _isWorking = false;

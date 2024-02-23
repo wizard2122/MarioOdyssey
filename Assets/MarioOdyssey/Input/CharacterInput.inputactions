@@ -92,6 +92,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "HatThrower",
+            "id": "70adf15c-007e-49d3-a9c9-56960b05badf",
+            "actions": [
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "c2e8827f-5d23-4522-b248-95670a797ea0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "add0face-01ad-4027-9bca-d04e4b1a2c55",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

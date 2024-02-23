@@ -10,10 +10,7 @@ public class Hat : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if(other.TryGetComponent(out ICapturable capturable))
-        {
-            capturable.Capture();
             Captured?.Invoke(capturable);
-        }
     }
 
     public void StartRotate() => _view.StartRotate();

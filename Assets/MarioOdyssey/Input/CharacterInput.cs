@@ -114,6 +114,34 @@ public partial class @CharacterInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""HatThrower"",
+            ""id"": ""70adf15c-007e-49d3-a9c9-56960b05badf"",
+            ""actions"": [
+                {
+                    ""name"": ""Throw"",
+                    ""type"": ""Button"",
+                    ""id"": ""c2e8827f-5d23-4522-b248-95670a797ea0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""add0face-01ad-4027-9bca-d04e4b1a2c55"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -122,6 +150,9 @@ public partial class @CharacterInput: IInputActionCollection2, IDisposable
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
         m_Movement_Look = m_Movement.FindAction("Look", throwIfNotFound: true);
+        // HatThrower
+        m_HatThrower = asset.FindActionMap("HatThrower", throwIfNotFound: true);
+        m_HatThrower_Throw = m_HatThrower.FindAction("Throw", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -233,9 +264,59 @@ public partial class @CharacterInput: IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // HatThrower
+    private readonly InputActionMap m_HatThrower;
+    private List<IHatThrowerActions> m_HatThrowerActionsCallbackInterfaces = new List<IHatThrowerActions>();
+    private readonly InputAction m_HatThrower_Throw;
+    public struct HatThrowerActions
+    {
+        private @CharacterInput m_Wrapper;
+        public HatThrowerActions(@CharacterInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Throw => m_Wrapper.m_HatThrower_Throw;
+        public InputActionMap Get() { return m_Wrapper.m_HatThrower; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(HatThrowerActions set) { return set.Get(); }
+        public void AddCallbacks(IHatThrowerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_HatThrowerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_HatThrowerActionsCallbackInterfaces.Add(instance);
+            @Throw.started += instance.OnThrow;
+            @Throw.performed += instance.OnThrow;
+            @Throw.canceled += instance.OnThrow;
+        }
+
+        private void UnregisterCallbacks(IHatThrowerActions instance)
+        {
+            @Throw.started -= instance.OnThrow;
+            @Throw.performed -= instance.OnThrow;
+            @Throw.canceled -= instance.OnThrow;
+        }
+
+        public void RemoveCallbacks(IHatThrowerActions instance)
+        {
+            if (m_Wrapper.m_HatThrowerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IHatThrowerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_HatThrowerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_HatThrowerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public HatThrowerActions @HatThrower => new HatThrowerActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+    }
+    public interface IHatThrowerActions
+    {
+        void OnThrow(InputAction.CallbackContext context);
     }
 }
